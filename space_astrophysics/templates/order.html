@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Заказ {{.order.ID}}</title>
+     <link rel="stylesheet" href="/static/styles/order_style.css">
+</head>
+<header>
+     <a href="/Hello"><img src="/static/img/image.jpg" alt="Космическая астрофизика" style="max-width: 100px; height: auto;"></a>  
+</header>
+<body>
+    <h1>Информация о заказе №{{.order.ID}}</h1>
+    <p><strong>Заголовок:</strong> {{.order.Title}}</p>
+</body>
+</html>

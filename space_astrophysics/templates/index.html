@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+    <head>
+    <title>Космическая астрофизика</title>
+    <link rel="stylesheet" href="/static/styles/index_style.css">
+</head>
+   <header>
+        <h1>
+            <a href="/Hello">
+             <img src="/static/img/image.jpg" alt="Космическая астрофизика" style="max-width: 100px; height: auto;">
+            </a>
+        </h1>
+    </header>
+<form action="/Hello" method="GET">
+    <input type="text" name="query" placeholder="Введите запрос" value="{{ .query }}">
+    <!-- value="{{ .query }}"  нужно для того, чтобы из обработчика передавать 
+    введенный запрос обратно на страницу. Тем самым введенный текст в поле поиска будет сохраняться-->
+    <button type="submit">Найти</button>
+</form>
+</head>
+<body>
+   <h1>
+        {{ .time }}
+    </h1>
+    <ul>
+        {{ range .orders }}
+        <li>
+            <a href="/order/{{ .ID }}"> {{ .Title }} </a>
+        </li>
+        {{ end }}
+    </ul>
+</body>
+</html>
