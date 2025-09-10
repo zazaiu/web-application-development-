@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Space & Astrophysics - Планеты</title>
+   <link rel="stylesheet" href="/static/style/style.css" />
+</head>
+<body>
+    <div class="frame">
+        <div class="overlap">
+            <img class="background-image" src="/static/img/space-background.svg" alt="Space background" />
+
+            <div class="header-container">
+                <div class="header">
+                    <h1 class="main-title">Space & Astrophysics</h1>
+                    <p class="subtitle">Расчет положения планет</p>
+                </div>
+                <!-- корзина -->
+                <a href="/order/1" class="order-widget">
+                    <span>Заявка:</span>
+                    <span>{{.CartCount}}</span>
+                </a>
+            </div>
+
+            <!-- поиск -->
+            <div class="search-section">
+                <div class="search-container">
+                    <form method="get" action="/services">
+                        <input type="text" name="q" class="search-input" placeholder="Введите планету" value="{{.Q}}" />
+                    </form>
+                </div>
+            </div>
+
+            <!-- список планет -->
+            <div class="planets-grid">
+                {{range .Services}}
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="{{.ImageURL}}" alt="{{.Name}}" />
+                        <h3 class="planet-name">{{.Name}}</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: {{printf "%.3f" .Perihelion}} a.e.</p>
+                            <p class="aphelion">Афелий: {{printf "%.3f" .Aphelion}} a.e.</p>
+                        </div>
+                        <a href="/services/{{.ID}}" class="select-button">Выбор</a>
+                    </div>
+                </div>
+                {{else}}
+                <!-- Если нет услуг, показываем все планеты -->
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/mercury.jpg" alt="Меркурий" />
+                        <h3 class="planet-name">Меркурий</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 0.307 a.e.</p>
+                            <p class="aphelion">Афелий: 0.467 a.e.</p>
+                        </div>
+                        <a href="/services/1" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/venus.jpg" alt="Венера" />
+                        <h3 class="planet-name">Венера</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 0.718 a.e.</p>
+                            <p class="aphelion">Афелий: 0.728 a.e.</p>
+                        </div>
+                        <a href="/services/2" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/earth.jpg" alt="Земля" />
+                        <h3 class="planet-name">Земля</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 0.983 a.e.</p>
+                            <p class="aphelion">Афелий: 1.017 a.e.</p>
+                        </div>
+                        <a href="/services/3" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/mars.jpg" alt="Марс" />
+                        <h3 class="planet-name">Марс</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 1.381 a.e.</p>
+                            <p class="aphelion">Афелий: 1.666 a.e.</p>
+                        </div>
+                        <a href="/services/4" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/jupiter.jpg" alt="Юпитер" />
+                        <h3 class="planet-name">Юпитер</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 4.950 a.e.</p>
+                            <p class="aphelion">Афелий: 5.495 a.e.</p>
+                        </div>
+                        <a href="/services/5" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/saturn.jpg" alt="Сатурн" />
+                        <h3 class="planet-name">Сатурн</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 9.041 a.e.</p>
+                            <p class="aphelion">Афелий: 10.124 a.e.</p>
+                        </div>
+                        <a href="/services/6" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/uranus.jpg" alt="Уран" />
+                        <h3 class="planet-name">Уран</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 18.286 a.e.</p>
+                            <p class="aphelion">Афелий: 20.096 a.e.</p>
+                        </div>
+                        <a href="/services/7" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/neptune.jpg" alt="Нептун" />
+                        <h3 class="planet-name">Нептун</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 29.810 a.e.</p>
+                            <p class="aphelion">Афелий: 30.329 a.e.</p>
+                        </div>
+                        <a href="/services/8" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/pluto.jpg" alt="Плутон" />
+                        <h3 class="planet-name">Плутон</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 29.658 a.e.</p>
+                            <p class="aphelion">Афелий: 49.305 a.e.</p>
+                        </div>
+                        <a href="/services/9" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/ceres.jpg" alt="Церера" />
+                        <h3 class="planet-name">Церера</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 2.557 a.e.</p>
+                            <p class="aphelion">Афелий: 2.977 a.e.</p>
+                        </div>
+                        <a href="/services/10" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/eris.jpg" alt="Эрида" />
+                        <h3 class="planet-name">Эрида</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 37.911 a.e.</p>
+                            <p class="aphelion">Афелий: 97.651 a.e.</p>
+                        </div>
+                        <a href="/services/11" class="select-button">Выбор</a>
+                    </div>
+                </div>
+
+                <div class="planet-card">
+                    <div class="planet-content">
+                        <img class="planet-image" src="/static/img/halleys.jpg" alt="Комета Галлея" />
+                        <h3 class="planet-name">Комета Галлея</h3>
+                        <div class="planet-data">
+                            <p class="perihelion">Перигелий: 0.586 a.e.</p>
+                            <p class="aphelion">Афелий: 35.082 a.e.</p>
+                        </div>
+                        <a href="/services/12" class="select-button">Выбор</a>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+
+            <div class="footer">
+                <p class="disclaimer">
+                    *Астрономическая единица (a.e.) — это среднее расстояние между Землёй и Солнцем, 
+                    которое составляет 149 597 870 километров.
+                </p>
+                <div class="copyright">
+                    <div class="divider"></div>
+                    <p>©Все права защищены "space astrophysics"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

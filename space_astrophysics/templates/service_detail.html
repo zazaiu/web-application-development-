@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <title>{{.Planet.Name}} — Space&astrophysics</title>
+  <link rel="stylesheet" href="/static/style/planets.css">
+</head>
+<body>
+  <header>
+    <span>space&astrophysics.</span> Расчет положения планет
+  </header>
+
+  <main>
+    <section class="card">
+      <img src="{{.ImageURL}}" alt="{{.Planet.Name}}" />
+      <h2>{{.Planet.Name}}</h2>
+      <p>{{.Planet.Description}}</p>
+
+      <p><strong>Дата расчета:</strong> {{.Date}}</p>
+      <p><strong>Расстояние от Солнца:</strong> {{printf "%.3f" .R_AU}} a.e.</p>
+      <p><strong>Угол от перигелия:</strong> {{printf "%.2f" .NuDeg}}°</p>
+
+      <div class="actions">
+        <a href="/services" class="btn btn-purple">Назад</a>
+        <a href="/order/add/{{.Planet.ID}}" class="btn btn-purple">Добавить в заявку</a>
+        <a href="/services" class="btn btn-outline">Главная</a>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
