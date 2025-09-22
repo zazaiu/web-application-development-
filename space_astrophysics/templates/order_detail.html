@@ -6,58 +6,45 @@
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { margin:0; padding:0; background-color:#000; color:#fff; font-family:'Space Grotesk', sans-serif; }
-        .main-container { width:1512px; margin:40px auto; }
-        .app-title { text-align:center; font-size:36px; margin-bottom:20px; }
-        .requests-title { text-align:center; font-size:48px; margin-bottom:30px; }
-        table { width:100%; border-collapse:collapse; margin-bottom:30px; }
-        th, td { border:1px solid #fff; padding:15px; text-align:center; font-size:24px; }
-        th { background-color:rgba(49,27,119,0.5); }
-        tr:hover { background-color:rgba(255,255,255,0.1); }
-        .total-distance { text-align:center; font-size:28px; margin:20px; }
+        .main-container { width:1200px; margin:40px auto; }
+        .app-title { text-align:center; font-size:32px; margin-bottom:20px; }
+        .requests-title { text-align:center; font-size:40px; margin-bottom:30px; }
+        .card { display:flex; align-items:center; background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:20px; }
+        .card img { width:80px; height:80px; margin-right:20px; border-radius:50%; }
+        .card-content { flex:1; display:flex; justify-content:space-between; align-items:center; }
+        .card-content div { margin:0 10px; }
         .buttons-row { text-align:center; margin-top:30px; display:flex; justify-content:center; gap:30px; }
         .action-button { padding:12px 24px; font-size:20px; border-radius:8px; border:2px solid #fff; color:#fff; text-decoration:none; cursor:pointer; }
         .home { background-color:#2B2B2B; border-color:#A2A2A2; }
-        .calculate { background-color:#190E3C; border-color:#311b77; }
-        .clear { background-color:#A2A2A2; border-color:#ffffff; }
     </style>
 </head>
 <body>
     <div class="main-container">
         <div class="app-title">space&astrophysics. Расчет положения планет</div>
-        <div class="requests-title">Заявка №{{.Order.ID}}</div>
+        <div class="requests-title">
+            Заявка №{{.Order.ID}} — 
+            <form method="get" action="/world/1" style="display:inline;">
+                <input type="date" name="date" value="{{.Date}}" onchange="this.form.submit()">
+            </form>
+        </div>
 
-        <form method="get" action="/order/calc/1">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Планета</th>
-                        <th>Дата</th>
-                        <th>Кол-во</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {{range .Order.Planets}}
-                    <tr>
-                        <td>{{.Planet.Name}}</td>
-                        <td>
-                            <input type="date" name="date[{{.Planet.ID}}]" value="{{$.Date}}">
-                        </td>
-                        <td>{{.Count}}</td>
-                    </tr>
-                    {{end}}
-                </tbody>
-            </table>
-
-            <div class="total-distance">
-                Средний угол: {{printf "%.2f" .AvgAngle}}°
+        {{range .Results}}
+        <div class="card">
+            <img src="{{.Planet.ImageURL}}" alt="{{.Planet.Name}}">
+            <div class="card-content">
+                <div><strong>{{.Planet.Name}}</strong></div>
+                <div>Расстояние: {{printf "%.3f" .R_AU}} a.e.</div>
+                <div>Угол: {{printf "%.2f" .NuDeg}}°</div>
+                <div><input type="text" placeholder="Комментарий"></div>
             </div>
+        </div>
+        {{end}}
 
-            <div class="buttons-row">
-                <a href="/order/clear/1" class="action-button clear">Очистить</a>
-                <button type="submit" class="action-button calculate">Рассчитать</button>
-                <a href="/services" class="action-button home">Главная</a>
-            </div>
-        </form>
+        <div class="buttons-row">
+            <!-- <a href="/order/clear/1" class="action-button clear">Очистить</a> -->
+            <!-- <button type="submit" class="action-button calculate">Рассчитать</button> -->
+            <a href="/planets" class="action-button home">Главная</a>
+        </div>
     </div>
 </body>
 </html>
