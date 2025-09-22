@@ -28,17 +28,21 @@
             </form>
         </div>
 
-        {{range .Results}}
-        <div class="card">
-            <img src="{{.Planet.ImageURL}}" alt="{{.Planet.Name}}">
-            <div class="card-content">
-                <div><strong>{{.Planet.Name}}</strong></div>
-                <div>Расстояние: {{printf "%.3f" .R_AU}} a.e.</div>
-                <div>Угол: {{printf "%.2f" .NuDeg}}°</div>
-                <div><input type="text" placeholder="Комментарий"></div>
-            </div>
+ {{range .Results}}
+<div class="card">
+    <img src="{{.Planet.ImageURL}}" alt="{{.Planet.Name}}">
+    <div class="card-content">
+        <div>
+            <strong>{{.Planet.Name}}</strong><br>
+            <small style="color:#aaa;">{{.Planet.Description}}</small>
         </div>
-        {{end}}
+        <div>Расстояние: {{printf "%.3f" .R_AU}} a.e.</div>
+        <div>Угол: {{printf "%.2f" .NuDeg}}°</div>
+        <div><input type="text" placeholder="Комментарий"></div>
+    </div>
+</div>
+{{end}}
+
 
         <div class="buttons-row">
             <!-- <a href="/order/clear/1" class="action-button clear">Очистить</a> -->
