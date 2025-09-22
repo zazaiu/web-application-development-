@@ -22,11 +22,11 @@ func NewHandler(r *repository.Repository) *Handler {
 }
 
 // ===== 1. СПИСОК ПЛАНЕТ =====
-func (h *Handler) GetServices(ctx *gin.Context) {
+func (h *Handler) ListPlanets(ctx *gin.Context) {
 	q := ctx.Query("q")
 	planets := h.Repository.GetAllPlanets()
 
-	// простой фильтр по имени
+	// фильтр по имени
 	var filtered []repository.Planet
 	if q == "" {
 		filtered = planets
@@ -38,8 +38,8 @@ func (h *Handler) GetServices(ctx *gin.Context) {
 		}
 	}
 
-	ctx.HTML(http.StatusOK, "services_list.html", gin.H{
-		"Services":  filtered,
+	ctx.HTML(http.StatusOK, "service_list.html", gin.H{
+		"Planets":   filtered, // ✅ заменили Services → Planets
 		"CartCount": len(h.Repository.Orders[1].Planets),
 		"OrderID":   1,
 		"Q":         q,
@@ -47,7 +47,7 @@ func (h *Handler) GetServices(ctx *gin.Context) {
 }
 
 // ===== 2. ДЕТАЛИ ПЛАНЕТЫ =====
-func (h *Handler) GetService(ctx *gin.Context) {
+func (h *Handler) ShowPlanetDetail(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
@@ -68,32 +68,55 @@ func (h *Handler) GetService(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "service_detail.html", gin.H{
 		"Planet":   planet,
 		"ImageURL": planet.ImageURL,
-		"Date":     now.Format("02.01.2006"),
+		"Date":     now.Format("2006-01-02"),
 		"R_AU":     r,
 		"NuDeg":    nu,
 	})
 }
 
-// ===== 3. ЗАЯВКА =====
-func (h *Handler) GetOrder(ctx *gin.Context) {
+// ===== 3. ЗАЯВКА (world) =====
+func (h *Handler) ViewMissionOrder(ctx *gin.Context) {
 	idStr := ctx.Param("id")
 	id, _ := strconv.Atoi(idStr)
 
-	order, err := h.Repository.GetOrderByID(id)
+	world, err := h.Repository.ViewMissionOrderByID(id)
 	if err != nil {
 		ctx.String(http.StatusNotFound, err.Error())
 		return
 	}
 
-	total := 0.0
-	for _, p := range order.Planets {
-		total += p.Planet.Perihelion
+	// читаем дату из query
+	dateStr := ctx.Query("date")
+	var now time.Time
+	if dateStr != "" {
+		parsed, err := time.Parse("2006-01-02", dateStr)
+		if err == nil {
+			now = parsed
+		} else {
+			now = time.Now()
+		}
+		world.Date = dateStr
+	} else {
+		now = time.Now()
+		world.Date = now.Format("2006-01-02")
+	}
+
+	// считаем угол и расстояние для каждой планеты
+	type Result struct {
+		Planet repository.Planet
+		R_AU   float64
+		NuDeg  float64
+	}
+	var results []Result
+	for _, op := range world.Planets {
+		r, nu := calcOrbit(op.Planet, now)
+		results = append(results, Result{Planet: op.Planet, R_AU: r, NuDeg: nu})
 	}
 
 	ctx.HTML(http.StatusOK, "order_detail.html", gin.H{
-		"Order":         order,
-		"Date":          time.Now().Format("02.01.2006"),
-		"TotalDistance": total,
+		"Order":   world,
+		"Date":    world.Date,
+		"Results": results,
 	})
 }
 
@@ -108,88 +131,24 @@ func (h *Handler) AddToOrder(ctx *gin.Context) {
 		return
 	}
 
-	order := h.Repository.Orders[1]
+	world := h.Repository.Orders[1]
 	found := false
-
-	for i, op := range order.Planets {
+	for _, op := range world.Planets {
 		if op.Planet.ID == planet.ID {
-			order.Planets[i].Count++
 			found = true
 			break
 		}
 	}
 
 	if !found {
-		order.Planets = append(order.Planets, repository.OrderedPlanet{Planet: planet, Count: 1})
+		world.Planets = append(world.Planets, repository.OrderedPlanet{Planet: planet, Comment: ""})
 	}
 
-	h.Repository.Orders[1] = order
-	ctx.Redirect(http.StatusFound, "/order/1")
+	h.Repository.Orders[1] = world
+	ctx.Redirect(http.StatusFound, "/world/1")
 }
 
-// ===== 6. РАССЧИТАТЬ ЗАЯВКУ =====
-func (h *Handler) CalcOrder(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	id, _ := strconv.Atoi(idStr)
-
-	dateStr := ctx.Query("date")
-	var now time.Time
-	if dateStr != "" {
-		parsed, err := time.Parse("2006-01-02", dateStr)
-		if err == nil {
-			now = parsed
-		} else {
-			now = time.Now()
-		}
-	} else {
-		now = time.Now()
-	}
-
-	order, err := h.Repository.GetOrderByID(id)
-	if err != nil {
-		ctx.String(http.StatusNotFound, err.Error())
-		return
-	}
-
-	totalAngle := 0.0
-	count := 0
-	for _, op := range order.Planets {
-		r, nu := calcOrbit(op.Planet, now)
-		_ = r
-		totalAngle += nu * float64(op.Count)
-		count += op.Count
-	}
-
-	avgAngle := 0.0
-	if count > 0 {
-		avgAngle = totalAngle / float64(count)
-	}
-
-	ctx.HTML(http.StatusOK, "order_detail.html", gin.H{
-		"Order":      order,
-		"Date":       now.Format("2006-01-02"),
-		"AvgAngle":   avgAngle,
-		"HasPlanets": len(order.Planets) > 0,
-	})
-}
-
-// ==== 7. Очистить заявку ====
-func (h *Handler) ClearOrder(ctx *gin.Context) {
-	idStr := ctx.Param("id")
-	id, _ := strconv.Atoi(idStr)
-
-	if _, ok := h.Repository.Orders[id]; ok {
-		h.Repository.Orders[id] = repository.Order{ID: id, Planets: []repository.OrderedPlanet{}}
-	}
-
-	ctx.Redirect(http.StatusFound, "/order/"+idStr)
-}
-
-//
-
-//
-
-// Юлианская дата
+// ====== Расчёт орбиты =====
 func julianDate(t time.Time) float64 {
 	year, month, day := t.Date()
 	if month <= 2 {
@@ -203,7 +162,6 @@ func julianDate(t time.Time) float64 {
 		float64(day) + float64(B) - 1524.5
 }
 
-// решаем уравнение Кеплера
 func solveKepler(M, e float64) float64 {
 	E := M
 	for i := 0; i < 15; i++ {
@@ -212,22 +170,16 @@ func solveKepler(M, e float64) float64 {
 	return E
 }
 
-// расчёт расстояния и угла
 func calcOrbit(p repository.Planet, t time.Time) (float64, float64) {
 	jd := julianDate(t)
-	M := 2 * math.Pi * (jd - p.T0) / (p.Period * 365.25) // средняя аномалия
+	M := 2 * math.Pi * (jd - p.T0) / (p.Period * 365.25)
 	M = math.Mod(M, 2*math.Pi)
 
 	E := solveKepler(M, p.E)
-
-	// истинная аномалия
 	nu := 2 * math.Atan2(
 		math.Sqrt(1+p.E)*math.Sin(E/2),
 		math.Sqrt(1-p.E)*math.Cos(E/2),
 	)
-
-	// расстояние
 	r := p.A * (1 - p.E*math.Cos(E))
-
 	return r, nu * 180 / math.Pi
 }
