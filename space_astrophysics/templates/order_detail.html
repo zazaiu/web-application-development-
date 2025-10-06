@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Space Astrophysics - Заявка</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { margin:0; padding:0; background-color:#000; color:#fff; font-family:'Space Grotesk', sans-serif; }
+        .main-container { width:1200px; margin:40px auto; }
+        .app-title { text-align:center; font-size:32px; margin-bottom:20px; }
+        .requests-title { text-align:center; font-size:40px; margin-bottom:30px; }
+        .card { display:flex; align-items:center; background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:20px; }
+        .card img { width:80px; height:80px; margin-right:20px; border-radius:50%; }
+        .card-content { flex:1; display:flex; justify-content:space-between; align-items:center; }
+        .card-content div { margin:0 10px; }
+        .buttons-row { text-align:center; margin-top:30px; display:flex; justify-content:center; gap:30px; }
+        .action-button { padding:12px 24px; font-size:20px; border-radius:8px; border:2px solid #fff; color:#fff; text-decoration:none; cursor:pointer; background:transparent; }
+        .home { background-color:#2B2B2B; border-color:#A2A2A2; }
+        .clear { background-color:#A21919; border-color:#FF4C4C; color:#fff; }
+        input.comment { padding:6px 10px; border-radius:6px; border:1px solid #ccc; width:200px; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="app-title">space&astrophysics. Расчет положения планет</div>
+        <div class="requests-title">
+            Заявка №{{.Order.ID}} — 
+            <form method="get" action="/world/{{.Order.ID}}" style="display:inline;">
+                <input type="date" name="date" value="{{.Date}}" onchange="this.form.submit()">
+            </form>
+        </div>
+
+        {{range .Results}}
+        <div class="card">
+            <img src="{{.Planet.ImageURL}}" alt="{{.Planet.Name}}">
+            <div class="card-content">
+                <div>
+                    <strong>{{.Planet.Name}}</strong><br>
+                    <small style="color:#aaa;">{{.Planet.Description}}</small>
+                </div>
+                <div>Расстояние: {{printf "%.3f" .R_AU}} a.e.</div>
+                <div>Угол: {{printf "%.2f" .NuDeg}}°</div>
+                <div>
+                 <!--   <input type="text" name="comment_{{.Planet.ID}}" placeholder="Комментарий" class="comment">-->
+                </div>
+            </div>
+        </div>
+        {{end}}
+
+        <div class="buttons-row">
+            <form method="post" action="/world/delete/{{.Order.ID}}" style="display:inline;">
+                <button type="submit" class="action-button clear">Удалить заявку</button>
+            </form>
+            <a href="/planets" class="action-button home">Главная</a>
+        </div>
+    </div>
+</body>
+</html>

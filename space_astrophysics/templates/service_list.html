@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Space & Astrophysics - Планеты</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- ВРЕМЕННОЕ ВСТРАИВАНИЕ СТИЛЕЙ -->
+    <style>
+        html,
+        body {
+            margin: 0px;
+            height: 100%;
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        button:focus-visible {
+            outline: 2px solid #4490e2 !important;
+            outline: -webkit-focus-ring-color auto 5px !important;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .frame {
+            position: relative;
+            width: 1512px;
+            height: 1382px;
+            background-color: #000000;
+            margin: 0 auto;
+        }
+
+        .overlap {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .background-image {
+            position: absolute;
+            width: 100%;
+            height: 423px;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .header {
+            position: relative;
+            text-align: center;
+            padding: 31px 59px;
+            z-index: 2;
+        }
+
+        .main-title {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 48px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 500;
+            font-size: 24px;
+            color: #ffffff;
+        }
+
+        .search-section {
+            position: relative;
+            padding: 20px 34px;
+            z-index: 2;
+        }
+
+        .search-container {
+            width: 1385px;
+            margin: 0 auto;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 59px;
+            border: 3px solid #311b77;
+            border-radius: 12px;
+            background: transparent;
+            color: #ffffff;
+            font-size: 32px;
+            padding: 0 20px;
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 500;
+        }
+
+        .search-input::placeholder {
+            color: #ffffff80;
+            text-align: center;
+        }
+
+        .planets-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 40px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .planet-card {
+            background-color: #ffffff1c;
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+            min-height: 365px;
+        }
+
+        .planet-content {
+            position: relative;
+            height: 100%;
+        }
+
+        .planet-image {
+            width: 99px;
+            height: 99px;
+            margin: 0 auto 15px;
+            aspect-ratio: 1;
+        }
+
+        .planet-name {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 36px;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        .planet-data {
+            margin-bottom: 20px;
+        }
+
+        .perihelion, .aphelion {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            color: #ffffff;
+            margin: 5px 0;
+        }
+
+        .select-button {
+            width: 276px;
+            height: 53px;
+            border-radius: 12px;
+            background: linear-gradient(0deg, rgba(49, 27, 119, 0.5) 0%, rgba(49, 27, 119, 0.5) 100%);
+            border: none;
+            color: #ffffff;
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+            line-height: 53px;
+        }
+
+        .select-button:hover {
+            background: linear-gradient(0deg, rgba(49, 27, 119, 0.7) 0%, rgba(49, 27, 119, 0.7) 100%);
+        }
+
+        .footer {
+            position: relative;
+            padding: 40px 62px;
+            z-index: 2;
+        }
+
+        .disclaimer {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #ffffff99;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .copyright {
+            text-align: center;
+        }
+
+        .divider {
+            width: 1387px;
+            height: 3px;
+            background-color: #ffffff;
+            margin: 0 auto 20px;
+        }
+
+        .copyright p {
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: #ffffff99;
+        }
+
+        /* ВИДЖЕТ КОРЗИНЫ */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 31px 59px;
+        }
+
+        .order-widget {
+            background: linear-gradient(0deg,rgba(49, 27, 119, 0.7) 0%, rgba(49, 27, 119, 0.7) 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-family: "Space Grotesk", sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: none;
+            min-width: 200px;
+            justify-content: center;
+        }
+
+        .order-widget:hover {
+            background: linear-gradient(0deg, rgba(229, 9, 20, 1) 0%, rgba(229, 9, 20, 1) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4);
+        }
+    </style>
+</head>
+<body>
+<div class="frame">
+    <div class="overlap">
+       <!--<img class="background-image" src="/static/img/space-background.svg" alt="Space background" />-->
+
+        <div class="header-container">
+            <div class="header">
+                <h1 class="main-title">Space & Astrophysics</h1>
+                <p class="subtitle">Расчет положения планет</p>
+            </div>
+            <a href="/world/1" class="order-widget">
+                <span>Заявка:</span>
+                <span>{{.CartCount}}</span>
+            </a>
+        </div>
+
+        <!-- поиск -->
+        <div class="search-section">
+            <form method="get" action="/planets" class="search-container">
+                <input type="text" name="q" class="search-input" placeholder="Введите планету" value="{{.Q}}" />
+            </form>
+        </div>
+
+        <!-- список планет -->
+        <div class="planets-grid">
+            {{range .Planets}}
+            <div class="planet-card">
+                <div class="planet-content">
+                    <img class="planet-image" src="{{.ImageURL}}" alt="{{.Name}}" />
+                    <h3 class="planet-name">{{.Name}}</h3>
+                    <div class="planet-data">
+                        <p class="perihelion">Перигелий: {{printf "%.3f" .Perihelion}} a.e.</p>
+                        <p class="aphelion">Афелий: {{printf "%.3f" .Aphelion}} a.e.</p>
+                    </div>
+                    <a href="/planets/{{.ID}}" class="select-button">Выбор</a>
+                </div>
+            </div>
+            {{else}}
+            <p>Нет доступных планет</p>
+            {{end}}
+        </div>
+    </div>
+</div>
+</body>
+</html>

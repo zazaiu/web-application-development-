@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>{{.Planet.Name}} — Space&Astrophysics</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+        body {
+          margin: 0;
+          font-family: 'Space Grotesk', sans-serif;
+          background-color: #0b0b0f;
+          color: #fff;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: flex-start;
+          min-height: 100vh;
+          padding: 40px 20px;
+        }
+
+        header {
+          width: 100%;
+          max-width: 800px;
+          font-weight: 600;
+          margin-bottom: 20px;
+          text-align: center;
+        }
+        header span {
+          color: #ffffff;
+        }
+
+        main {
+          display: flex;
+          flex-direction: column;
+          gap: 30px;
+          width: 100%;
+          max-width: 800px;
+        }
+
+        .card {
+          background-color: #1e1e1e;
+          border-radius: 12px;
+          padding: 30px;
+          text-align: center;
+          box-shadow: 0 10px 20px rgba(0,0,0,.5);
+        }
+
+        .card img {
+          width: 120px;
+          margin-bottom: 16px;
+        }
+
+        .card h2 {
+          font-size: 1.8rem;
+          margin: 10px 0;
+        }
+
+        .card p {
+          font-size: 1rem;
+          line-height: 1.6;
+          margin-bottom: 24px;
+        }
+
+        .planet-data {
+          margin: 20px 0;
+          font-size: 1rem;
+          font-weight: 600;
+        }
+
+        .actions {
+          display: flex;
+          gap: 12px;
+          justify-content: center;
+          flex-wrap: wrap;
+        }
+
+        .btn {
+          padding: 10px 18px;
+          border-radius: 6px;
+          font-size: 0.95rem;
+          font-weight: 600;
+          cursor: pointer;
+          border: none;
+          transition: background .2s, color .2s, border .2s;
+          text-decoration: none;
+          display: inline-block;
+        }
+
+        .btn-purple {
+          background-color: #311B77;
+          color: #fff;
+        }
+        .btn-purple:hover {
+          background-color: #4b28b8;
+        }
+
+        .btn-outline {
+          background: transparent;
+          border: 2px solid #311B77;
+          color: #fff;
+        }
+        .btn-outline:hover {
+          background: #311B77;
+          color: #fff;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Space & Astrophysics</h1>
+    <p>Расчет положения планет</p>
+    <a href="/world/{{.WorldID}}" class="btn btn-purple">
+        Заявка: {{.CartCount}}
+    </a>
+</header>
+
+<main>
+    <div class="card">
+        <img src="{{.ImageURL}}" alt="{{.Planet.Name}}" />
+        <h2>{{.Planet.Name}}</h2>
+        <p>{{.Planet.Description}}</p>
+        <div class="planet-data">
+            <p>Дата расчета: {{.Date}}</p>
+            <p>Расстояние от Солнца: {{printf "%.3f" .R_AU}} a.e.</p>
+            <p>Угол от перигелия: {{printf "%.2f" .NuDeg}}°</p>
+        </div>
+
+        <div class="actions">
+            <form method="post" action="/world/add-planet">
+                <input type="hidden" name="world_id" value="{{.WorldID}}">
+                <input type="hidden" name="planet_id" value="{{.Planet.ID}}">
+                <button type="submit" class="btn btn-purple">Добавить в заявку</button>
+            </form>
+            <a href="/planets" class="btn btn-outline">Назад к планетам</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
