@@ -1,0 +1,239 @@
+openapi: 3.0.3
+info:
+  title: Space Astrophysics API
+  version: "1.0"
+  description: API для SPA по управлению заявками и планетами
+servers:
+  - url: http://localhost:8080/api
+tags:
+  - name: Users
+  - name: Planets
+  - name: Worlds
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        role:
+          type: string
+          enum: [guest, astronaut, mission_control]
+    Planet:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        status:
+          type: string
+        a:
+          type: number
+        e:
+          type: number
+        period:
+          type: number
+    World:
+      type: object
+      properties:
+        id:
+          type: integer
+        creator_id:
+          type: integer
+        world_status:
+          type: string
+        planets:
+          type: array
+          items:
+            $ref: '#/components/schemas/Planet'
+security:
+  - bearerAuth: []
+paths:
+
+  /users/register:
+    post:
+      tags:
+        - Users
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: Пользователь создан
+
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Аутентификация
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+
+  /planets:
+    get:
+      tags:
+        - Planets
+      summary: Список планет (guest, astronaut, mission_control)
+      responses:
+        '200':
+          description: Список планет
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Planet'
+    post:
+      tags:
+        - Planets
+      summary: Создать планету (mission_control)
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Планета создана
+
+  /planets/{id}:
+    get:
+      tags:
+        - Planets
+      summary: Детали планеты (guest, astronaut, mission_control)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Планета
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Planet'
+    put:
+      tags:
+        - Planets
+      summary: Обновить планету (mission_control)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Планета обновлена
+    delete:
+      tags:
+        - Planets
+      summary: Удалить планету (mission_control)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Планета удалена
+
+  /worlds:
+    get:
+      tags:
+        - Worlds
+      summary: Список заявок
+      responses:
+        '200':
+          description: Заявки
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/World'
+    post:
+      tags:
+        - Worlds
+      summary: Создать заявку (astronaut)
+      security:
+        - bearerAuth: []
+      responses:
+        '201':
+          description: Заявка создана
+
+  /worlds/{id}:
+    put:
+      tags:
+        - Worlds
+      summary: Обновить заявку (astronaut)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Заявка обновлена
+    delete:
+      tags:
+        - Worlds
+      summary: Удалить заявку (astronaut)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Заявка помечена как удаленная (deleted)
+
+  /worlds/{id}/complete:
+    put:
+      tags:
+        - Worlds
+      summary: Завершение заявки (mission_control)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Заявка завершена

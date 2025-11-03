@@ -1,0 +1,356 @@
+definitions:
+  models.Planet:
+    properties:
+      a:
+        type: number
+      description:
+        type: string
+      e:
+        type: number
+      id:
+        type: integer
+      imageURL:
+        description: nullable
+        type: string
+      name:
+        type: string
+      period:
+        type: number
+      status:
+        description: '''active'' / ''deleted'''
+        type: string
+      t0:
+        type: number
+    type: object
+  models.User:
+    properties:
+      id:
+        type: integer
+      password:
+        description: хранить хэш!
+        type: string
+      role:
+        description: guest/astronaut/mission_control
+        type: string
+      username:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/planets:
+    get:
+      description: Получение всех планет, опционально фильтруя по названию
+      parameters:
+      - description: Поиск по имени
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Planet'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Список планет
+      tags:
+      - planets
+    post:
+      consumes:
+      - application/json
+      description: Создаёт новую планету (только модератор)
+      parameters:
+      - description: Новая планета
+        in: body
+        name: planet
+        required: true
+        schema:
+          $ref: '#/definitions/models.Planet'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Planet'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Создание планеты
+      tags:
+      - planets
+  /api/planets/{id}:
+    delete:
+      description: Удаляет планету по ID (только модератор)
+      parameters:
+      - description: ID планеты
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Удаление планеты
+      tags:
+      - planets
+    get:
+      description: Получение данных конкретной планеты по ID
+      parameters:
+      - description: ID планеты
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Planet'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Детали планеты
+      tags:
+      - planets
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные планеты по ID (только модератор)
+      parameters:
+      - description: ID планеты
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления
+        in: body
+        name: planet
+        required: true
+        schema:
+          $ref: '#/definitions/models.Planet'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Обновление планеты
+      tags:
+      - planets
+  /api/users/login:
+    post:
+      consumes:
+      - application/json
+      description: Аутентификация и выдача JWT
+      parameters:
+      - description: Логин и пароль
+        in: body
+        name: credentials
+        required: true
+        schema:
+          additionalProperties:
+            type: string
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Вход пользователя
+      tags:
+      - users
+  /api/users/logout:
+    post:
+      description: Удаляет сессию из Redis
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Выход пользователя
+      tags:
+      - users
+  /api/users/profile:
+    get:
+      description: Получение данных профиля авторизованного пользователя
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Профиль пользователя
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Обновляет данные авторизованного пользователя
+      parameters:
+      - description: Обновлённые данные
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Обновление профиля
+      tags:
+      - users
+  /api/users/register:
+    post:
+      consumes:
+      - application/json
+      description: Создаёт нового пользователя
+      parameters:
+      - description: Пользователь
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Регистрация пользователя
+      tags:
+      - users
+swagger: "2.0"

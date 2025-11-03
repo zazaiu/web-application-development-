@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <title>Space & Astrophysics - Планеты</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+
+        a { text-decoration: none; }
+
+        .frame {
+            position: relative;
+            width: 1512px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+        .header {
+            padding: 31px 59px 10px 59px;
+        }
+
+        .main-title {
+            font-weight: 700;
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-weight: 500;
+            font-size: 24px;
+        }
+
+        /* КОРЗИНА */
+        .cart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-family: "Space Grotesk", sans-serif;
+            transition: all 0.3s ease;
+            margin-left: auto;
+            margin-top: 15px; /* опущена под подзаголовок */
+        }
+
+        .cart-emoji {
+            font-size: 52px;
+            transition: all 0.3s ease;
+        }
+
+        .cart-count {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* Активная корзина */
+        .cart-active .cart-emoji {
+            color: #8a2be2; /* фиолетовый */
+            filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.6));
+            cursor: pointer;
+        }
+
+        .cart-active:hover .cart-emoji {
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        /* Неактивная корзина */
+        .cart-inactive .cart-emoji {
+            color: #555;
+            opacity: 0.6;
+        }
+
+        .cart-inactive {
+            pointer-events: none;
+            cursor: default;
+            opacity: 0.7;
+        }
+
+        /* ПОИСК */
+        .search-section {
+            padding: 20px 34px;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 59px;
+            border: 3px solid #311b77;
+            border-radius: 12px;
+            background: transparent;
+            color: #fff;
+            font-size: 32px;
+            text-align: center;
+        }
+
+        .search-input::placeholder {
+            color: #ffffff80;
+        }
+
+        /* ПЛАНЕТЫ */
+        .planets-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 40px;
+        }
+
+        .planet-card {
+            background-color: #ffffff1c;
+            border-radius: 18px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .planet-image {
+            width: 99px;
+            height: 99px;
+            margin: 0 auto 15px;
+        }
+
+        .planet-name {
+            font-weight: 700;
+            font-size: 36px;
+        }
+
+        .perihelion, .aphelion {
+            font-weight: 700;
+            font-size: 24px;
+            margin: 5px 0;
+        }
+
+        .select-button {
+            width: 276px;
+            height: 53px;
+            border-radius: 12px;
+            background: linear-gradient(0deg, rgba(49, 27, 119, 0.5), rgba(49, 27, 119, 0.5));
+            color: #fff;
+            font-weight: 700;
+            font-size: 20px;
+            display: inline-block;
+            text-align: center;
+            line-height: 53px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .select-button:hover {
+            background: linear-gradient(0deg, rgba(49, 27, 119, 0.7), rgba(49, 27, 119, 0.7));
+        }
+
+        /* HEADER-CART WRAPPER */
+        .header-cart-wrapper {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding: 0 59px;
+        }
+
+        .cart-wrapper {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+    </style>
+</head>
+<body>
+<div class="frame">
+    <!-- HEADER -->
+    <div class="header">
+        <h1 class="main-title">Space & Astrophysics</h1>
+        <p class="subtitle">Расчет положения планет</p>
+    </div>
+
+    <!-- КОРЗИНА ПОД HEADER -->
+    <div class="header-cart-wrapper">
+        <div class="cart-wrapper">
+        {{if gt .CartCount 0}}
+    <a href="/world/{{.WorldID}}" class="cart-container cart-active" title="Открыть заявку">
+        <span class="cart-emoji">🛒</span>
+        <span class="cart-count">{{.CartCount}}</span>
+    </a>
+{{else}}
+    <div class="cart-container cart-inactive" title="Заявок нет">
+        <span class="cart-emoji">🛒</span>
+        <span class="cart-count">{{.CartCount}}</span>
+    </div>
+{{end}}
+    </div>
+
+    <!-- ПОИСК -->
+    <div class="search-section">
+        <form method="get" action="/planets">
+            <input type="text" name="q" class="search-input" placeholder="Введите планету" value="{{.Q}}" />
+        </form>
+    </div>
+
+    <!-- СПИСОК ПЛАНЕТ -->
+    <div class="planets-grid">
+        {{range .Planets}}
+        <div class="planet-card">
+            <img class="planet-image" src="{{.ImageURL}}" alt="{{.Name}}" />
+            <h3 class="planet-name">{{.Name}}</h3>
+            <p class="perihelion">Перигелий: {{printf "%.3f" .Perihelion}} a.e.</p>
+            <p class="aphelion">Афелий: {{printf "%.3f" .Aphelion}} a.e.</p>
+            <a href="/planets/{{.ID}}" class="select-button">Выбор</a>
+        </div>
+        {{else}}
+        <p>Нет доступных планет</p>
+        {{end}}
+    </div>
+</div>
+</body>
+</html>
